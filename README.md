@@ -16,4 +16,4 @@ git clone https://codeberg.org/mattheus/trippage && cd trippage && cargo install
 * `export` saves the image as a PNG.
 
 # Gallery
-[Example](example.png)
+![Example](example.png)
