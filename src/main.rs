@@ -151,7 +151,7 @@ fn rand_image() -> Result<(), Box<dyn Error>> {
 
     let image = image.trim();
 
-    println!("{}{}", image, "\n\n");
+    println!("{}{}{}", "\n\n", image, "\n\n");
 
     let mut input = String::new();
     io::stdin()
