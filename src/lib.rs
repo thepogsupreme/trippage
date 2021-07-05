@@ -35,12 +35,14 @@ pub fn help_message() -> Result<(), Box<dyn Error>> {
 {}  Generate image
 {}      Use a seed for generation
 {}      Load an image
-{}    Export image as PNG\n",
+{}    Export image as PNG
+{}       Export image a GIF \n",
         "help".blue(),
         "generate".blue(),
         "seed".blue(),
         "load".blue(),
         "export".blue(),
+        "gif".blue(),
     );
 
     println!("Press ENTER to return to menu...");
@@ -60,12 +62,12 @@ pub fn rand_image(length: String, height: String) -> Result<(), Box<dyn Error>> 
     let seed_x = rand::thread_rng().gen_range(0..10000);
     let seed_y = rand::thread_rng().gen_range(0..10000);
 
-    println!("-----\n{}\n{}\n-----", seed_x, seed_y);
+    // println!("-----\n{}\n{}\n-----", seed_x, seed_y);
 
     let seed_x: f64 = (1.0 / seed_x as f64) * 10_f64.powf((seed_x.to_string().len() - 1) as f64);
     let seed_y: f64 = (1.0 / seed_y as f64) * 10_f64.powf((seed_y.to_string().len() - 1) as f64);
 
-    println!("-----\n{}\n{}\n-----", seed_x, seed_y);
+    // println!("-----\n{}\n{}\n-----", seed_x, seed_y);
 
     let mut image = String::new();
 
@@ -152,6 +154,15 @@ pub fn load_image(_s: String) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn export_image(_s: String) -> Result<(), Box<dyn Error>> {
+    println!("Press ENTER to return to menu...");
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line.");
+    Ok(())
+}
+
+pub fn export_gif(_s: String) -> Result<(), Box<dyn Error>> {
     println!("Press ENTER to return to menu...");
     let mut input = String::new();
     io::stdin()
