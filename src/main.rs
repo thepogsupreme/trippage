@@ -2,37 +2,22 @@
 #![allow(unused_variables)]
 
 use colored::*;
-use rand::Rng;
-use std::error::Error;
 use std::io;
+use std::io::Write;
 use std::process;
 
-static COLOR_ARRAY: [Color; 16] = [
-    { Color::Black },
-    { Color::Red },
-    { Color::Green },
-    { Color::Yellow },
-    { Color::Blue },
-    { Color::Magenta },
-    { Color::Cyan },
-    { Color::White },
-    { Color::BrightBlack },
-    { Color::BrightRed },
-    { Color::BrightGreen },
-    { Color::BrightYellow },
-    { Color::BrightBlue },
-    { Color::BrightMagenta },
-    { Color::BrightCyan },
-    { Color::BrightWhite },
-];
+use trippage::*;
 
 fn main() {
     // Clear
     loop {
         std::process::Command::new("sh")
             .args(&["-c", "clear"])
-            .output()
+            .status()
             .expect("Well shit ツ");
+
+        print!("{} {} ", "trippagectl".cyan(), "➜".green());
+        io::stdout().flush().unwrap();
 
         let mut input = String::new();
         io::stdin()
@@ -51,13 +36,6 @@ fn main() {
             let input = input.trim();
             match input {
                 "q" | "Q" => break,
-                "generate" => {
-                    if let Err(e) = rand_image() {
-                        eprintln!("Application error: {}", e);
-                        process::exit(1);
-                    }
-                }
-
                 "help" => {
                     if let Err(e) = help_message() {
                         eprintln!("Application error: {}", e);
@@ -65,15 +43,47 @@ fn main() {
                     }
                 }
 
-                "seed" => {
-                    println!("Feed me:");
-                    let mut input = String::new();
+                "generate" => {
+                    //Run function to a create random image, and if an error is output (propagated from function), run code with error message
+                    println!("Enter the desired image length and height (separated by a space):");
+                    let mut dimensions = String::new();
                     io::stdin()
-                        .read_line(&mut input)
-                        .expect("Failed to read line.");
+                        .read_line(&mut dimensions)
+                        .expect("Failed to read line");
+                    let dimensions = dimensions
+                        .match_indices(' ')
+                        .nth(0)
+                        .map(|(index, _)| dimensions.split_at(index))
+                        .unwrap();
+                    let input2 = dimensions.0.trim().to_string();
+                    let input3 = dimensions.1.trim().to_string();
+                    if let Err(e) = rand_image(input2, input3) {
+                        eprintln!("Application\t error: {}", e);
+                        process::exit(1);
+                    }
+                }
 
-                    if let Err(e) = seed_image(input) {
-                        eprintln!("Application error: {}", e);
+                "seed" => {
+                    println!("Enter the desired seed to render:");
+                    let mut input1 = String::new();
+                    io::stdin()
+                        .read_line(&mut input1)
+                        .expect("Failed to read line");
+                    println!("Enter the desired image length and height (separated by a space):");
+                    let mut dimensions = String::new();
+                    io::stdin()
+                        .read_line(&mut dimensions)
+                        .expect("Failed to read line");
+                    let dimensions = dimensions
+                        .match_indices(' ')
+                        .nth(0)
+                        .map(|(index, _)| dimensions.split_at(index))
+                        .unwrap();
+                    let input2 = dimensions.0.trim().to_string();
+                    let input3 = dimensions.1.trim().to_string();
+                    //Run function to create an image from a user-provided seed, and if an error is output (propagated from function), run code with error message
+                    if let Err(e) = seed_image(input1.trim().to_string(), input2, input3) {
+                        eprintln!("Application\t error: {}", e);
                         process::exit(1);
                     }
                 }
@@ -114,75 +124,6 @@ fn main() {
 
     std::process::Command::new("sh")
         .args(&["-c", "clear"])
-        .output()
+        .status()
         .expect("Well shit ツ");
-}
-
-fn help_message() -> Result<(), Box<dyn Error>> {
-    println!(
-        "
-{}      Returns this page :)
-{}  Generate image
-{}      Use a seed for generation
-{}      Load an image
-{}    Export image as PNG",
-        "help".blue(),
-        "generate".blue(),
-        "seed".blue(),
-        "load".blue(),
-        "export".blue(),
-    );
-    Ok(())
-}
-
-fn rand_image() -> Result<(), Box<dyn Error>> {
-    let pixel_count = (16, 16);
-
-    let mut rand_seed;
-    let mut image = String::new();
-
-    for i in 0..pixel_count.0 {
-        for j in 0..pixel_count.1 {
-            rand_seed = rand::thread_rng().gen_range(0..16);
-            image.push_str(&"██".color(COLOR_ARRAY[rand_seed]).to_string());
-        }
-        image.push('\n');
-    }
-
-    let image = image.trim();
-
-    println!("{}{}{}", "\n\n", image, "\n\n");
-
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line.");
-    Ok(())
-}
-
-fn seed_image(_s: String) -> Result<(), Box<dyn Error>> {
-    println!("Pepe");
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line.");
-    Ok(())
-}
-
-fn load_image(_s: String) -> Result<(), Box<dyn Error>> {
-    println!("Pepe");
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line.");
-    Ok(())
-}
-
-fn export_image(_s: String) -> Result<(), Box<dyn Error>> {
-    println!("Pepe");
-    let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line.");
-    Ok(())
 }
