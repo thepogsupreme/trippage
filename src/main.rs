@@ -40,7 +40,7 @@ fn main() -> std::io::Result<()> {
                 }
 
                 "generate" => {
-                    //Run function to a create random image, and if an error is output (propagated from function), run code with error message
+                    // Run function to a create random image, and if an error is output (propagated from function), run code with error message
                     println!("Enter the desired image length and height (separated by a space):");
                     let mut dimensions = String::new();
                     io::stdin().read_line(&mut dimensions)?;

@@ -47,9 +47,7 @@ pub fn help_message() -> Result<(), Box<dyn Error>> {
 
     println!("Press ENTER to return to menu...");
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
+    io::stdin().read_line(&mut input)?;
     Ok(())
 }
 
@@ -91,9 +89,7 @@ pub fn rand_image(length: String, height: String) -> Result<(), Box<dyn Error>> 
 
     println!("Press ENTER to return to menu...");
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
+    io::stdin().read_line(&mut input)?;
     Ok(())
 }
 
@@ -138,35 +134,27 @@ pub fn seed_image(seed: String, length: String, height: String) -> Result<(), Bo
 
     println!("Press ENTER to return to menu...");
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
+    io::stdin().read_line(&mut input)?;
     Ok(())
 }
 
 pub fn load_image(_s: String) -> Result<(), Box<dyn Error>> {
     println!("Press ENTER to return to menu...");
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line.");
+    io::stdin().read_line(&mut input)?;
     Ok(())
 }
 
 pub fn export_image(_s: String) -> Result<(), Box<dyn Error>> {
     println!("Press ENTER to return to menu...");
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line.");
+    io::stdin().read_line(&mut input)?;
     Ok(())
 }
 
 pub fn export_gif(_s: String) -> Result<(), Box<dyn Error>> {
     println!("Press ENTER to return to menu...");
     let mut input = String::new();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line.");
+    io::stdin().read_line(&mut input)?;
     Ok(())
 }
