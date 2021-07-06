@@ -4,7 +4,7 @@
 // Perlin Noise implementation, derived from source: https://en.wikipedia.org/wiki/Perlin_noise#Implementation
 
 fn interpolate(a0: f64, a1: f64, w: f64) -> f64 {
-    (a1 - a0) * w + a0
+    (a1 - a0) * ((w * (w * 6.0 - 15.0) + 10.0) * w * w * w) + a0
 }
 
 struct Vector2 {
@@ -50,4 +50,10 @@ pub fn perlin(x: f64, y: f64) -> f64 {
 
     value = interpolate(ix0, ix1, sy);
     value
+}
+
+pub fn normalized_perlin(x: f64, y: f64) -> f64 {
+    let mut result = perlin(x, y);
+    result = result * 1.4;
+    (result + 1.0) * 0.5
 }

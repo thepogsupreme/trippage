@@ -4,10 +4,11 @@
 mod perlin_noise;
 
 use colored::*;
+use core::f64::consts::PI;
 use perlin_noise::*;
 use rand::Rng;
 use std::error::Error;
-use std::io;
+use std::io::{self, Write};
 
 static COLOR_ARRAY: [Color; 16] = [
     { Color::Black },
@@ -27,6 +28,8 @@ static COLOR_ARRAY: [Color; 16] = [
     { Color::BrightCyan },
     { Color::BrightWhite },
 ];
+
+const SAMPLE_INTERVAL: f64 = 0.05489325;
 
 pub fn help_message() -> Result<(), Box<dyn Error>> {
     println!(
@@ -69,20 +72,40 @@ pub fn rand_image(length: String, height: String) -> Result<(), Box<dyn Error>> 
 
     let mut image = String::new();
 
+    let mut max_g = f64::MIN;
+    let mut min_g = f64::MAX;
+
     for i in 0..height {
+        let y = set_x_y(i, seed_y);
+
         for j in 0..length {
-            let prln = perlin((j as f64) * 31415.9 + seed_x, (i as f64) * 31415.9 + seed_y);
-            let mut prln = (prln * 1.0) + 0.5;
-            if prln > 1.0 {
-                prln = prln - 1.0;
-            } else if prln < 0.0 {
-                prln = 1.0 + prln;
+            let x = set_x_y(j, seed_x);
+            let value = normalized_perlin(x, y);
+            let prln_r = (((360.0 + 360.0 * value) * (PI / 180.0)).sin() + 1.0) * 0.5;
+            let prln_g = (((240.0 + 360.0 * value) * (PI / 180.0)).sin() + 1.0) * 0.5;
+            let prln_b = (((120.0 + 360.0 * value) * (PI / 180.0)).sin() + 1.0) * 0.5;
+
+            let prln_r = prln_r * 256.0;
+            let prln_g = prln_g * 256.0;
+            let prln_b = prln_b * 256.0;
+
+            if prln_g > max_g {
+                max_g = prln_g;
             }
-            let pixel = (prln * 16.0) as usize;
-            image.push_str(&"██".color(COLOR_ARRAY[pixel]).to_string());
+            if prln_g < min_g {
+                min_g = prln_g;
+            }
+
+            image.push_str(
+                &"██"
+                    .truecolor(prln_r as u8, prln_g as u8, prln_b as u8)
+                    .to_string(),
+            );
         }
+
         image.push('\n');
     }
+
     let image = image.trim();
 
     println!("{}{}", image, "\n\n");
@@ -94,47 +117,85 @@ pub fn rand_image(length: String, height: String) -> Result<(), Box<dyn Error>> 
 }
 
 pub fn seed_image(seed: String, length: String, height: String) -> Result<(), Box<dyn Error>> {
-    println!("Seeding image!");
-
+    let mut seed = seed.trim().to_string();
+    io::stdout().flush().unwrap();
+    let is_empty = seed.len() == 0;
     let length: usize = length.parse().unwrap_or(16);
     let height: usize = height.parse().unwrap_or(16);
+    let mut seed_x;
+    let mut seed_y;
 
-    let seed = seed
-        .match_indices("")
-        .nth(4)
-        .map(|(index, _)| seed.split_at(index))
-        .unwrap();
-
-    let seed_x: f64 =
-        (1.0 / seed.0.parse().unwrap_or(420.0)) * 10_f64.powf((seed.0.len() - 1) as f64);
-    let seed_y: f64 =
-        (1.0 / seed.1.parse().unwrap_or(6969.0)) * 10_f64.powf((seed.1.len() - 1) as f64);
-
-    // println!("-----\n{}\n{}\n-----", seed_x, seed_y);
+    if is_empty {
+        println!("Randomizing image!");
+        seed_x = rand::thread_rng().gen_range(0..10000) as f64;
+        seed_y = rand::thread_rng().gen_range(0..10000) as f64;
+        seed.push_str(&seed_x.to_string());
+        seed.push_str(&seed_y.to_string());
+        seed_x = seed_x + 1.0 / seed_x;
+        seed_y = seed_x;
+    } else {
+        println!("Seeding image!");
+        //let seeds = seed.match_indices("").nth(seed.len()/2).map(|(index, _)| seed.split_at(index)).unwrap();
+        seed_x = 1.0 / seed.parse().unwrap_or(420.0);
+        seed_y = seed_x;
+    }
 
     let mut image = String::new();
 
+    let mut max_g = f64::MIN;
+    let mut min_g = f64::MAX;
+
     for i in 0..height {
+        let y = set_x_y(i, seed_y);
+
         for j in 0..length {
-            let prln = perlin((j as f64) * 500.0 + seed_x, (i as f64) * 500.0 + seed_y);
-            let mut prln = (prln * 1.0) + 0.5;
-            if prln > 1.0 {
-                prln = prln - 1.0;
-            } else if prln < 0.0 {
-                prln = 1.0 + prln;
+            let x = set_x_y(j, seed_x);
+            let value = normalized_perlin(x, y);
+            let prln_r = ((90.0 + 11.25 * value).sin() + 1.0) * 0.5;
+            let prln_g = ((60.0 + 11.25 * value).sin() + 1.0) * 0.5;
+            let prln_b = ((30.0 + 11.25 * value).sin() + 1.0) * 0.5;
+
+            let prln_r = prln_r * 256.0;
+            let prln_g = prln_g * 256.0;
+            let prln_b = prln_b * 256.0;
+
+            if prln_g > max_g {
+                max_g = prln_g;
             }
-            let pixel = (prln * 16.0) as usize;
-            image.push_str(&"██".color(COLOR_ARRAY[pixel]).to_string());
+            if prln_g < min_g {
+                min_g = prln_g;
+            }
+
+            image.push_str(
+                &"██"
+                    .truecolor(prln_r as u8, prln_g as u8, prln_b as u8)
+                    .to_string(),
+            );
         }
+
         image.push('\n');
     }
     let image = image.trim();
 
+    println!("\nMin G: {}\nMax G: {}", min_g, max_g);
+
     println!("{}{}", image, "\n\n");
 
-    println!("Press ENTER to return to menu...");
+    println!(
+        "{}{}",
+        if is_empty {
+            "Randomly generated seed: "
+        } else {
+            "Your seed: "
+        },
+        seed
+    );
+
+    println!("Press Enter to return to menu...");
     let mut input = String::new();
-    io::stdin().read_line(&mut input)?;
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
     Ok(())
 }
 
@@ -157,4 +218,8 @@ pub fn export_gif(_s: String) -> Result<(), Box<dyn Error>> {
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
     Ok(())
+}
+
+fn set_x_y(value: usize, seed: f64) -> f64 {
+    (value as f64) * SAMPLE_INTERVAL + seed
 }
