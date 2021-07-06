@@ -9,12 +9,8 @@ use std::process;
 use trippage::*;
 
 fn main() -> std::io::Result<()> {
-    // Clear
     loop {
-        std::process::Command::new("sh")
-            .args(&["-c", "clear"])
-            .status()
-            .expect("Well shit ツ");
+        print!("\x1b[2J\x1b[H"); // Clears the screen
 
         print!("{} {} ", "trippagectl".cyan(), "➜".green());
         io::stdout().flush().unwrap();
@@ -120,10 +116,7 @@ fn main() -> std::io::Result<()> {
         }
     }
 
-    std::process::Command::new("sh")
-        .args(&["-c", "clear"])
-        .status()
-        .expect("Well shit ツ");
+    print!("\x1b[2J\x1b[H");
 
     Ok(())
 }
