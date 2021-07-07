@@ -13,7 +13,7 @@ Requires:
 * [Rust](https://www.rust-lang.org/tools/install)
 
 ```
-git clone https://codeberg.org/mattheus/trippage && cd trippage && cargo install
+cargo install --git https://codeberg.org/mattheus/trippage
 ```
 
 ## Screenshots
