@@ -9,7 +9,6 @@ Trippage is a CLI random image generator ran as an asynchronous interactive shel
 ## Installation
 Requires:
 
-* [Git](https://git-scm.com/downloads)
 * [Rust](https://www.rust-lang.org/tools/install)
 
 ```
