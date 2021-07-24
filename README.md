@@ -32,5 +32,9 @@ cargo install --git https://codeberg.org/mattheus/trippage
 ### Example
 ![Example](example.png)
 
+## Contributing
+Follow these steps for optimal contribution.
+![Kontriboot](kontriboot.png)
+
 ## License
 Licensed under the EUPL-1.2 or later. See `LICENSE.md` for information.
